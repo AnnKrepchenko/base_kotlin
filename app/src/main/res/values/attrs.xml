@@ -1,0 +1,10 @@
+<resources>
+
+    <attr name="text" format="string" />
+    <attr name="hint" format="string" />
+
+    <declare-styleable name="LoginEditText">
+        <attr name="text" />
+        <attr name="hint" />
+    </declare-styleable>
+</resources>

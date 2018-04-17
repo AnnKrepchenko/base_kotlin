@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#2baadf</color>
+    <color name="colorGrayLight">#FFCECED9</color>
+    <color name="colorLoginSelected">#3c7d9e</color>
+    <color name="colorLogin">#53a9d8</color>
+    <color name="splashBackground">#1d2a35</color>
+    <color name="textHint">#BABCBC</color>
+    <color name="textGray">#686868</color>
+    <color name="textDarkBlue">#1d2a35</color>
+    <color name="textBlueGray">#8390a0</color>
+    <color name="dividerGray">#ededed</color>
+    <color name="lightGrayBackground">#efefef</color>
+    <color name="expandableGray">#f6f6f6</color>
+    <color name="textTeamColor">#7a878e</color>
+
+</resources>

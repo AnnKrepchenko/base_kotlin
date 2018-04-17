@@ -1,0 +1,129 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "com.basekotlin.app"
+        minSdkVersion 21
+        targetSdkVersion 26
+        versionCode 1
+        versionName "0.0.1"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    aaptOptions {
+        additionalParameters "--no-version-vectors"
+    }
+
+    configurations.all { config ->
+        if (config.name.contains('UnitTest')) {
+            config.resolutionStrategy.eachDependency { details ->
+                if (details.requested.group == 'com.squareup.leakcanary' && details.requested.name == 'leakcanary-android') {
+                    details.useTarget(group: details.requested.group, name: 'leakcanary-android-no-op', version: details.requested.version)
+                }
+            }
+        }
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "${variant.name}-${variant.versionName}.apk"
+        }
+    }
+
+    flavorDimensions 'version'
+
+    signingConfigs {
+        debug {
+            storeFile file("keys/debug.jks")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+        release {
+            storeFile file("keys/release.jks")
+            storePassword ""
+            keyAlias ""
+            keyPassword ""
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            debuggable true
+            useProguard true
+            buildConfigField "boolean", "LOG_ENABLED", "true"
+            signingConfig signingConfigs.debug
+        }
+        qa {
+            minifyEnabled false
+            debuggable true
+            useProguard true
+            buildConfigField "boolean", "LOG_ENABLED", "true"
+            signingConfig signingConfigs.debug
+        }
+        release {
+            minifyEnabled true
+            debuggable false
+            useProguard true
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            buildConfigField "boolean", "LOG_ENABLED", "false"
+            signingConfig signingConfigs.release
+        }
+    }
+
+    productFlavors {
+        dev {
+            dimension 'version'
+            applicationIdSuffix ".dev"
+            buildConfigField "String", "SERVER_API_URL", "\"\""
+            buildConfigField "String", "API_VERSION", "\"v1/\""
+            buildConfigField "String", "WEB_BASE_URL", "\"\""
+        }
+
+        stage {
+            dimension 'version'
+            applicationIdSuffix ".stage"
+            buildConfigField "String", "SERVER_API_URL", "\"\""
+            buildConfigField "String", "API_VERSION", "\"v1/\""
+            buildConfigField "String", "WEB_BASE_URL", "\"\""
+        }
+
+        production {
+            dimension 'version'
+            buildConfigField "String", "SERVER_API_URL", "\"\""
+            buildConfigField "String", "API_VERSION", "\"v1/\""
+            buildConfigField "String", "WEB_BASE_URL", "\"\""
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    implementation "com.android.support:appcompat-v7:$rootProject.ext.supportVersion"
+    implementation "com.android.support.constraint:constraint-layout:1.0.2"
+    implementation "com.android.support:design:$rootProject.ext.supportVersion"
+    implementation "com.squareup.okhttp3:okhttp:$rootProject.ext.okHttpVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.ext.okHttpVersion"
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.ext.retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$rootProject.ext.retrofitVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$rootProject.ext.retrofitVersion"
+    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.ext.rxVersion"
+    implementation "io.reactivex.rxjava2:rxkotlin:$rootProject.ext.rxKotlinVersion"
+    
+    implementation "com.github.bumptech.glide:glide:4.2.0"
+
+    debugImplementation "com.facebook.stetho:stetho:1.5.0"
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestUtil 'com.android.support.test:orchestrator:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    testImplementation 'junit:junit:4.12'
+}
